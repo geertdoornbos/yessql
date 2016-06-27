@@ -10,6 +10,7 @@ namespace YesSql.Core.Sql.Schema {
             DbType = DbType.Object;
             Default = null;
             Length = null;
+            UserDefinedType = null;
         }
         public byte Scale { get; protected set; }
 
@@ -17,12 +18,20 @@ namespace YesSql.Core.Sql.Schema {
 
         public DbType DbType { get; private set; }
 
+        public string UserDefinedType { get; private set; }
+
         public object Default { get; private set; }
 
         public int? Length { get; private set; }
 
         public ColumnCommand WithType(DbType dbType) {
             DbType = dbType;
+            return this;
+        }
+
+        public ColumnCommand WithUserDefinedType(string userDefinedType)
+        {
+            UserDefinedType = userDefinedType;
             return this;
         }
 

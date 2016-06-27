@@ -251,7 +251,10 @@ namespace YesSql.Core.Sql.SchemaBuilders
 
             if (!command.IsIdentity || _dialect.HasDataTypeInIdentityColumn)
             {
-                builder.Append(_dialect.GetTypeName(command.DbType, command.Length, command.Precision, command.Scale));
+                if (!String.IsNullOrEmpty(command.UserDefinedType))
+                    builder.Append(command.UserDefinedType);
+                else
+                    builder.Append(_dialect.GetTypeName(command.DbType, command.Length, command.Precision, command.Scale));
             }
 
             // append identity if handled

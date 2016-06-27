@@ -12,6 +12,10 @@ using YesSql.Storage.Sql;
 using YesSql.Tests.Indexes;
 using YesSql.Tests.Models;
 
+#if NET451
+using Microsoft.SqlServer.Types;
+#endif
+
 namespace YesSql.Tests
 {
     /// <summary>
@@ -194,6 +198,12 @@ namespace YesSql.Tests
                     .DropMapIndexTable(nameof(PublishedArticle)), false
                 );
 
+#if NET451
+                session.ExecuteMigration(schemaBuilder => schemaBuilder
+                    .DropMapIndexTable(nameof(PinPointByLocation)), false
+                );
+#endif
+
                 session.ExecuteMigration(schemaBuilder => schemaBuilder
                     .DropTable("Document"), false
                 );
@@ -242,6 +252,15 @@ namespace YesSql.Tests
                     .CreateMapIndexTable(nameof(PublishedArticle), column => { }
                     )
                 );
+
+#if NET451
+                session.ExecuteMigration(builder => builder
+                    .CreateMapIndexTable(nameof(PinPointByLocation), table => table
+                        .Column<SqlGeography>("Location")
+                    )
+                );
+#endif
+
             }
         }
 
@@ -1698,5 +1717,54 @@ namespace YesSql.Tests
                     .Count());
             }
         }
+
+#if NET451
+        [Fact]
+        public async Task ShouldStorePinPoints()
+        {
+            _store.RegisterIndexes<PinPointIndexProvider>();
+
+            using (var session = _store.CreateSession())
+            {
+                var p1 = new PinPoint { Name = "Amsterdam", Location = SqlGeography.Point(52.372852, 4.893712, 4326) };
+                var p2 = new PinPoint { Name = "Seattle", Location = SqlGeography.Point(47.61, -122.33, 4326) };
+
+                session.Save(p1);
+                session.Save(p2);
+            }
+            using (var session = _store.CreateSession())
+            {
+                Assert.Equal(2, await session.QueryAsync().For<PinPoint>().Count());
+            }
+        }
+
+        [Fact]
+        public async Task ShouldFindPinPointByDistance()
+        {
+            _store.RegisterIndexes<PinPointIndexProvider>();
+
+            using (var session = _store.CreateSession())
+            {
+                var p1 = new PinPoint { Name = "Amsterdam", Location = SqlGeography.Point(52.372852, 4.893712, 4326) };
+                var p2 = new PinPoint { Name = "Seattle", Location = SqlGeography.Point(47.61, -122.33, 4326) };
+
+                session.Save(p1);
+                session.Save(p2);
+            }
+
+            using (var session = _store.CreateSession())
+            {
+                // Distance from Groningen should find Amsterdam within 250km
+                var qs = session.QueryAsync<PinPoint, PinPointByLocation>().Where("Location.STDistance('POINT(6.568269 53.219367)') < 250000");
+
+                var ps = await qs.List();
+
+                Assert.Equal(1, ps.Count());
+                Assert.Equal("Amsterdam", ps.First().Name);
+            }
+        }
+
+#endif
+
     }
 }
