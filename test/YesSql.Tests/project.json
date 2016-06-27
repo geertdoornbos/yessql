@@ -11,6 +11,29 @@
   },
   "testRunner": "xunit",
   "frameworks": {
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Runtime": {
+          "type": "build"
+        },
+        "System.Reflection": {
+          "type": "build"
+        },
+        "System.Runtime.Serialization": {
+          "type": "build"
+        },
+        "System.Runtime.Serialization.Primitives": {
+          "type": "build"
+        },
+        "System.Threading.Tasks": {
+          "type": "build"
+        }
+      },
+      "dependencies": {
+        "Microsoft.SqlServer.Types": "11.0.2",
+        "dotnet-test-xunit": "1.0.0-rc2-*"
+      }
+    },
     "netcoreapp1.0": {
       "imports": [
         "dnxcore50",
@@ -18,11 +41,11 @@
       ],
       "dependencies": {
         "Microsoft.NETCore.App": {
-          "version": "1.0.0-*",
+          "version": "1.0.0-rc2-3002702",
           "type": "platform"
         },
         "dotnet-test-xunit": "1.0.0-rc2-*",
-        "System.Reflection.Extensions": "4.0.1-rc2-24027",
+        "System.Reflection.Extensions": "4.0.1-*",
         "System.Runtime.Serialization.Primitives": "4.1.1-rc2-24027"
       }
     }

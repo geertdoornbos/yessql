@@ -51,8 +51,6 @@ namespace YesSql.Tests
     }
     public class SqlServerTests : CoreTests
     {
-        public static string ConnectionString => @"Data Source=.;Initial Catalog=tempdb;Integrated Security=True";
-
         public SqlServerTests()
         {
             _store = new Store(cfg =>
@@ -77,8 +75,6 @@ namespace YesSql.Tests
     }
     public abstract class InMemoryTests : CoreTests
     {
-        public static string ConnectionString => @"Data Source=.;Initial Catalog=tempdb;Integrated Security=True";
-
         public InMemoryTests()
         {
             _store = new Store(cfg =>
@@ -104,8 +100,6 @@ namespace YesSql.Tests
     }
     public abstract class CacheTests : CoreTests
     {
-        public static string ConnectionString => @"Data Source=.;Initial Catalog=tempdb;Integrated Security=True";
-
         public CacheTests()
         {
             _store = new Store(cfg =>
@@ -131,7 +125,6 @@ namespace YesSql.Tests
     public abstract class LightningDBTests : CoreTests
     {
         private TemporaryFolder _tempFolder;
-        public static string ConnectionString => @"Data Source=.;Initial Catalog=tempdb;Integrated Security=True";
 
         public LightningDBTests()
         {
@@ -158,6 +151,10 @@ namespace YesSql.Tests
     {
 
         protected IStore _store;
+
+        public static string Server => @"(localdb)\MSSQLLocalDB";
+
+        public static string ConnectionString => $"Data Source={Server};Initial Catalog=tempdb;Integrated Security=True";
 
         public CoreTests()
         {
