@@ -156,7 +156,7 @@ namespace YesSql.Tests
 
         protected IStore _store;
 
-        public static string Server => @"(localdb)\MSSQLLocalDB";
+        public static string Server => "."; //@"(localdb)\MSSQLLocalDB";
 
         public static string ConnectionString => $"Data Source={Server};Initial Catalog=tempdb;Integrated Security=True";
 
